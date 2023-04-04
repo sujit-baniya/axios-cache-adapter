@@ -116,7 +116,7 @@ const mergeRequestConfig = function (config, req) {
   // Generate request UUID
   mergedConfig.uuid = mergedConfig.key(req)
 
-  config.debug(`Request config ${mergedConfig.watch} for ${req.url}`, mergedConfig)
+  config.debug(`Request config for ${req.url}`, mergedConfig)
 
   return mergedConfig
 }

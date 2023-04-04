@@ -34,6 +34,7 @@ function setupCache (config = {}) {
     try {
       res = await reqConfig.adapter(req)
     } catch (err) {
+      config.debug(err)
       networkError = err
     }
 
