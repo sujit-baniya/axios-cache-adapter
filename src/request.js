@@ -7,6 +7,7 @@ async function request (config, req) {
 
   const next = (...args) => response(config, req, ...args)
 
+  // await config.watch.setItem(config.uuid, true)
   // run invalidate function to check if any cache items need to be invalidated.
   await config.invalidate(config, req)
 

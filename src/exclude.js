@@ -26,7 +26,7 @@ function exclude(config = {}, req) {
     return true
   }
 
-  if ((typeof exclude.filter === 'function') && exclude.filter(req)) {
+  if ((typeof exclude.filter === 'function') && exclude.filter(config, req)) {
     debug(`Excluding request by Yasser ;) filter ${req.url}`)
 
     return true
@@ -57,5 +57,5 @@ function exclude(config = {}, req) {
 
 
 
-export default { exclude, filter }
+export default exclude
 export { exclude, filter }

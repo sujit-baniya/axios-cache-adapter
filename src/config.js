@@ -2,8 +2,9 @@ import axios from 'axios'
 
 import MemoryStore from './memory'
 import { key, invalidate } from './cache'
+import exclude, { filter } from "./exclude"
 
-const noop = () => {}
+const noop = () => { }
 const debug = (...args) => console.log('[axios-cache-adapter]', ...args)
 
 const defaults = {
@@ -68,9 +69,11 @@ const makeConfig = function (override = {}) {
     config.debug = noop
   }
 
+  if (exclude.filter === null) exclude.filter = filter;
+
   // Create an in memory store if none was given
   if (!config.store) config.store = new MemoryStore()
-  config.watch = new MemoryStore()
+  if (!config.watch) config.watch = new MemoryStore()
 
   config.debug('Global cache config', config)
 

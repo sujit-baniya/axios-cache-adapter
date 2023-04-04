@@ -3508,49 +3508,50 @@ function setupCache() {
             return reqConfig.adapter(req);
           case 10:
             res = _context.sent;
-            _context.next = 16;
+            _context.next = 17;
             break;
           case 13:
             _context.prev = 13;
             _context.t0 = _context["catch"](7);
+            console.log(_context.t0, 'brrrrrrryeeeeeee');
             networkError = _context.t0;
-          case 16:
+          case 17:
             if (!networkError) {
-              _context.next = 31;
+              _context.next = 32;
               break;
             }
             // Check if we should attempt reading stale cache data
             readOnError = Object(_utilities__WEBPACK_IMPORTED_MODULE_15__["isFunction"])(reqConfig.readOnError) ? reqConfig.readOnError(networkError, req) : reqConfig.readOnError;
             if (!readOnError) {
-              _context.next = 30;
+              _context.next = 31;
               break;
             }
-            _context.prev = 19;
+            _context.prev = 20;
             // Force cache tu return stale data
             reqConfig.acceptStale = true;
 
             // Try to read from cache again
-            _context.next = 23;
+            _context.next = 24;
             return Object(_request__WEBPACK_IMPORTED_MODULE_12__["default"])(reqConfig, req);
-          case 23:
+          case 24:
             res = _context.sent;
             // Signal that data is from stale cache
             res.next.request.stale = true;
 
             // No need to check if `next` is a function just return cache data
             return _context.abrupt("return", res.next);
-          case 28:
-            _context.prev = 28;
-            _context.t1 = _context["catch"](19);
-          case 30:
-            throw networkError;
+          case 29:
+            _context.prev = 29;
+            _context.t1 = _context["catch"](20);
           case 31:
-            return _context.abrupt("return", next(res));
+            throw networkError;
           case 32:
+            return _context.abrupt("return", next(res));
+          case 33:
           case "end":
             return _context.stop();
         }
-      }, _callee, null, [[7, 13], [19, 28]]);
+      }, _callee, null, [[7, 13], [20, 29]]);
     }));
     return _adapter.apply(this, arguments);
   }
@@ -3874,6 +3875,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _memory__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./memory */ "./src/memory.js");
 /* harmony import */ var _cache__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./cache */ "./src/cache.js");
+/* harmony import */ var _exclude__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./exclude */ "./src/exclude.js");
 
 
 
@@ -3885,6 +3887,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
 function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+
 
 
 
@@ -3952,10 +3955,11 @@ var makeConfig = function makeConfig() {
   } else {
     config.debug = noop;
   }
+  if (_exclude__WEBPACK_IMPORTED_MODULE_8__["default"].filter === null) _exclude__WEBPACK_IMPORTED_MODULE_8__["default"].filter = _exclude__WEBPACK_IMPORTED_MODULE_8__["filter"];
 
   // Create an in memory store if none was given
   if (!config.store) config.store = new _memory__WEBPACK_IMPORTED_MODULE_6__["default"]();
-  config.watch = new _memory__WEBPACK_IMPORTED_MODULE_6__["default"]();
+  if (!config.watch) config.watch = new _memory__WEBPACK_IMPORTED_MODULE_6__["default"]();
   config.debug('Global cache config', config);
   return config;
 };
@@ -3993,7 +3997,7 @@ var mergeRequestConfig = function mergeRequestConfig(config, req) {
 
   // Generate request UUID
   mergedConfig.uuid = mergedConfig.key(req);
-  config.debug("Request config ".concat(mergedConfig.watch, " for ").concat(req.url), mergedConfig);
+  config.debug("Request config for ".concat(req.url), mergedConfig);
   return mergedConfig;
 };
 
@@ -4082,7 +4086,7 @@ function exclude() {
     debug("Excluding request by HTTP method ".concat(req.url));
     return true;
   }
-  if (typeof exclude.filter === 'function' && exclude.filter(req)) {
+  if (typeof exclude.filter === 'function' && exclude.filter(config, req)) {
     debug("Excluding request by Yasser ;) filter ".concat(req.url));
     return true;
   }
@@ -4103,10 +4107,7 @@ function exclude() {
   }
   return false;
 }
-/* harmony default export */ __webpack_exports__["default"] = ({
-  exclude: exclude,
-  filter: filter
-});
+/* harmony default export */ __webpack_exports__["default"] = (exclude);
 
 
 /***/ }),
@@ -4455,7 +4456,8 @@ function _request() {
               args[_key] = arguments[_key];
             }
             return _response__WEBPACK_IMPORTED_MODULE_9__["default"].apply(void 0, [config, req].concat(args));
-          }; // run invalidate function to check if any cache items need to be invalidated.
+          }; // await config.watch.setItem(config.uuid, true)
+          // run invalidate function to check if any cache items need to be invalidated.
           _context.next = 5;
           return config.invalidate(config, req);
         case 5:
