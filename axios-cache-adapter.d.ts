@@ -41,6 +41,7 @@ export interface IAxiosCacheAdapterOptions
 	 * *Cannot be overridden per request*
 	 */
 	store?: object;
+	watch?: object;
 	/**
 	 * {String|Function} Generate a unique cache key for the request.
 	 * Will use request url and serialized params by default.

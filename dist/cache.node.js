@@ -4072,7 +4072,7 @@ var mergeRequestConfig = function mergeRequestConfig(config, req) {
 
   // Generate request UUID
   mergedConfig.uuid = mergedConfig.key(req);
-  config.debug("Request config for ".concat(req.url), mergedConfig);
+  config.debug("Request config ".concat(mergedConfig.watch, " for ").concat(req.url), mergedConfig);
   return mergedConfig;
 };
 
