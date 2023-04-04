@@ -91,10 +91,20 @@ async function defaultInvalidate (config, req) {
   }
 }
 
+async function watchingInvalidate (config, req) {
+  if (config.watch.getItem(config.uuid) !== undefined) {
+    config.debug(`watching invalidate-------<>-----, ${config.uuid}, <>------<>, ${config.watch}`)
+    await config.watch.removeItem(config.uuid)
+    await config.store.removeItem(config.uuid)
+  }
+}
+
 function invalidate (config = {}) {
   if (isFunction(config.invalidate)) return config.invalidate
-  return defaultInvalidate
+  return watchingInvalidate
 }
+
+
 
 function serializeQuery (req) {
   if (!req.params) return ''

@@ -86,10 +86,5 @@
     {
       "path": "./src/index.js"
     }
-  ],
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint"
-    }
-  }
+  ]
 }

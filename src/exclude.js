@@ -1,6 +1,22 @@
 import { isObject } from './utilities'
 
-function exclude (config = {}, req) {
+function filter(config = {}, req) {
+  const { exclude = {}, debug, document } = config
+
+  const needObservation = document.cacheDictionary[req.url];
+  debug(needObservation, 'needObservationneedObservation')
+  if (needObservation !== undefined) {
+    const obj = needObservation.reduce((accumulator, value) => {
+      return { ...accumulator, [value]: true };
+    }, {});
+    Object.assign(document.observation, obj);
+    // observation[needObservation] = true
+  }
+  debug(`filterrrrr-------<uuid>-----, ${req.url}, ${document.included[req.url] !== undefined}, '1111', ${document.observation}, ${needObservation}`)
+  return document.included[req.url] === undefined
+}
+
+function exclude(config = {}, req) {
   const { exclude = {}, debug } = config
   const method = req.method.toLowerCase()
 
@@ -11,7 +27,7 @@ function exclude (config = {}, req) {
   }
 
   if ((typeof exclude.filter === 'function') && exclude.filter(req)) {
-    debug(`Excluding request by filter ${req.url}`)
+    debug(`Excluding request by Yasser ;) filter ${req.url}`)
 
     return true
   }
@@ -39,4 +55,7 @@ function exclude (config = {}, req) {
   return false
 }
 
-export default exclude
+
+
+export default { exclude, filter }
+export { exclude, filter }

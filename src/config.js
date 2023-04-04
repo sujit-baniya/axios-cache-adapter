@@ -12,8 +12,10 @@ const defaults = {
     maxAge: 0,
     limit: false,
     store: null,
+    watch: null,
     key: null,
     invalidate: null,
+    document: null,
     exclude: {
       paths: [],
       query: true,
@@ -68,6 +70,7 @@ const makeConfig = function (override = {}) {
 
   // Create an in memory store if none was given
   if (!config.store) config.store = new MemoryStore()
+  config.watch = new MemoryStore()
 
   config.debug('Global cache config', config)
 
