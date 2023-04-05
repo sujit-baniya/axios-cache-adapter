@@ -3,7 +3,7 @@ import md5 from 'md5'
 
 import serialize from './serialize'
 
-async function write (config, req, res) {
+async function write(config, req, res) {
   try {
     const entry = {
       expires: config.expires,
@@ -28,7 +28,7 @@ async function write (config, req, res) {
   return true
 }
 
-async function read (config, req) {
+async function read(config, req) {
   const { uuid, ignoreCache } = config
 
   const entry = await config.store.getItem(uuid)
@@ -63,7 +63,7 @@ async function read (config, req) {
   return data
 }
 
-function key (config) {
+function key(config) {
   if (isFunction(config.key)) return config.key
 
   let cacheKey
@@ -84,29 +84,36 @@ function key (config) {
   return cacheKey
 }
 
-async function defaultInvalidate (config, req) {
+async function defaultInvalidate(config, req) {
   const method = req.method.toLowerCase()
   if (config.exclude.methods.includes(method)) {
     await config.store.removeItem(config.uuid)
   }
 }
 
-async function watchingInvalidate (config, req) {
-  if (config.watch.getItem(config.uuid) !== undefined) {
-    config.debug(`watching invalidate-------<>-----, ${config.uuid}, <>------<>, ${config.watch}`)
+async function watchingInvalidate(config, req) {
+  const result = await config.watch.getItem(config.uuid);
+  if (result !== null) {
+    // config.debug(`watching invalidate-------<>-----, ${config.uuid}, <>------<>, ${config.watch}`)
     await config.watch.removeItem(config.uuid)
     await config.store.removeItem(config.uuid)
   }
+  // const result = await config.watch.getItem(config.uuid);
+  // if (result !== null) {
+  //   config.debug(`watching invalidate-------<>-----, ${config.uuid}, <>------<>, ${config.watch}`)
+  //   await config.watch.removeItem(config.uuid)
+  //   await config.store.removeItem(config.uuid)
+  // }
 }
 
-function invalidate (config = {}) {
+function invalidate(config = {}) {
   if (isFunction(config.invalidate)) return config.invalidate
   return watchingInvalidate
 }
 
 
 
-function serializeQuery (req) {
+function serializeQuery(req) {
   if (!req.params) return ''
 
   // Probably server-side, just stringify the object

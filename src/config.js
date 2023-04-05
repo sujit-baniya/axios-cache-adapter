@@ -19,7 +19,7 @@ const defaults = {
     document: null,
     exclude: {
       paths: [],
-      query: true,
+      query: false,
       filter: null,
       methods: ['post', 'patch', 'put', 'delete']
     },

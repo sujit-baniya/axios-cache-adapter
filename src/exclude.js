@@ -4,15 +4,20 @@ function filter(config = {}, req) {
   const { exclude = {}, debug, document } = config
 
   const needObservation = document.cacheDictionary[req.url];
-  debug(needObservation, 'needObservationneedObservation')
+  debug('exclude filter from library', req.url)
   if (needObservation !== undefined) {
-    const obj = needObservation.reduce((accumulator, value) => {
-      return { ...accumulator, [value]: true };
-    }, {});
-    Object.assign(document.observation, obj);
+    needObservation.forEach(async element => {
+      await config?.watch?.setItem(element, true);
+    });
+    // const obj = needObservation.reduce((accumulator, value) => {
+    //   return { ...accumulator, [value]: true };
+    // }, {});
+    // debug('invalidated by ', config.watch)
+    // Object.assign(document.observation, obj);
     // observation[needObservation] = true
   }
-  debug(`filterrrrr-------<uuid>-----, ${req.url}, ${document.included[req.url] !== undefined}, '1111', ${document.observation}, ${needObservation}`)
+  if(Object.keys(document.included).length === 0) return false;
+  // debug(`exclude filter from library ------------, ${req.url}, ${document.included[req.url] !== undefined}, '1111', ${document.observation}, ${needObservation}`)
   return document.included[req.url] === undefined
 }
 
@@ -28,6 +33,12 @@ function exclude(config = {}, req) {
 
   if ((typeof exclude.filter === 'function') && exclude.filter(config, req)) {
     debug(`Excluding request by Yasser ;) filter ${req.url}`)
+
+    return true
+  }
+
+  if ((typeof exclude.filter !== 'function') && filter(config, req)) {
+    debug(`Excluding request by default Yasser ;) filter ${req.url}`)
 
     return true
   }

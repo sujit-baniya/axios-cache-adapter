@@ -59,15 +59,16 @@ describe('Cache exclusion', () => {
       exclude: { paths: [/\/users/], methods },
       debug
     }
+    console.log(exclude(config, { url, method }))
 
     assert.ok(exclude(config, { url, method }))
     assert.strictEqual(exclude(config, { url: 'https://some-rest.api/invoices', method }), false)
   })
 
-  it('Should exclude filtered requests', () => {
+  it('Should exclude filtered requests 777', () => {
     const config = {
       exclude: {
-        filter: req => req.params && req.params.shouldExclude,
+        // filter: req => req.params && req.params.shouldExclude,
         methods
       },
       debug
