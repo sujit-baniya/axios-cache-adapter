@@ -1,7 +1,7 @@
 import { isObject } from './utilities'
 
 function filter(config = {}, req) {
-  const { exclude = {}, debug, document } = config
+  const { debug, document } = config
 
   const needObservation = document.cacheDictionary[req.url];
   debug('exclude filter from library', req.url)
@@ -9,15 +9,8 @@ function filter(config = {}, req) {
     needObservation.forEach(async element => {
       await config?.watch?.setItem(element, true);
     });
-    // const obj = needObservation.reduce((accumulator, value) => {
-    //   return { ...accumulator, [value]: true };
-    // }, {});
-    // debug('invalidated by ', config.watch)
-    // Object.assign(document.observation, obj);
-    // observation[needObservation] = true
   }
   if(Object.keys(document.included).length === 0) return false;
-  // debug(`exclude filter from library ------------, ${req.url}, ${document.included[req.url] !== undefined}, '1111', ${document.observation}, ${needObservation}`)
   return document.included[req.url] === undefined
 }
 
