@@ -92,18 +92,17 @@ async function defaultInvalidate(config, req) {
 }
 
 async function watchingInvalidate(config, req) {
-  const result = await config.watch.getItem(config.uuid);
+  // const result = await config.watch?.getItem(config.uuid);
+  const url = req?.url?.replace(config.host, '') || '';
+  const result = await config.watch?.getItem(url);
+
+  console.log('watchingInvalidate', result, config.uuid, req.url)
   if (result !== null) {
+    console.log('watchingInvalidate inside', config.watch, config.store)
     // config.debug(`watching invalidate-------<>-----, ${config.uuid}, <>------<>, ${config.watch}`)
-    await config.watch.removeItem(config.uuid)
+    await config.watch?.removeItem(url)
     await config.store.removeItem(config.uuid)
   }
-  // const result = await config.watch.getItem(config.uuid);
-  // if (result !== null) {
-  //   config.debug(`watching invalidate-------<>-----, ${config.uuid}, <>------<>, ${config.watch}`)
-  //   await config.watch.removeItem(config.uuid)
-  //   await config.store.removeItem(config.uuid)
-  // }
 }
 
 function invalidate(config = {}) {

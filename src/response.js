@@ -45,7 +45,11 @@ async function response (config, req, res) {
     }
 
     // Write response to cache
+
+    //TODO: Need watch here ;) ???
     await write(config, req, res)
+    config.debug(`Response checking:`, res)
+
   } else {
     // Mark request as excluded from cache
     res.request.excludedFromCache = true

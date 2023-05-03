@@ -11,12 +11,14 @@ const defaults = {
   // Default settings when solely creating the cache adapter with setupCache.
   cache: {
     maxAge: 0,
+    host: null,
     limit: false,
     store: null,
     watch: null,
     key: null,
     invalidate: null,
     document: null,
+    invalidationOrder: false,
     exclude: {
       paths: [],
       query: false,
@@ -42,6 +44,30 @@ const defaults = {
 
 // List of disallowed in the per-request config.
 const disallowedPerRequestKeys = ['limit', 'store', 'adapter', 'uuid', 'acceptStale']
+
+const proxyHandler = {
+  get(target, prop, receiver) {
+    if (typeof target[prop] === "object" && target[prop] !== null) {
+      console.log("dyno ;)", target[prop], "proxyHanlerrrrrrrr me ;)");
+      return setupHostProxy(target.host, target[prop]); 
+    }
+    console.log('lol', prop)
+    try{
+      const result = target.host !== null && prop.replace(target.host, '') || prop;
+      console.log(result, 'opppppslol', target[result])
+      return target[result]
+    }catch{
+      return target[prop]
+    }
+  }
+};
+
+const setupHostProxy = (host, data) => {
+  return new Proxy({
+    ...data,
+    host
+  }, proxyHandler);
+};
 
 /**
  * Make a global config object.
@@ -75,6 +101,8 @@ const makeConfig = function (override = {}) {
   if (!config.store) config.store = new MemoryStore()
   if (!config.watch) config.watch = new MemoryStore()
 
+
+  config.document = setupHostProxy(config.host, config.document);
   config.debug('Global cache config', config)
 
   return config

@@ -11,12 +11,12 @@ import { isFunction } from './utilities'
  * @param   {object} [config={}] Cache adapter options
  * @returns {object} Object containing cache `adapter` and `store`
  */
-function setupCache (config = {}) {
+function setupCache(config = {}) {
   // Extend default configuration
   config = makeConfig(config)
 
   // Axios adapter. Receives the axios request configuration as only parameter
-  async function adapter (req) {
+  async function adapter(req) {
     // Merge the per-request config with the instance config.
     const reqConfig = mergeRequestConfig(config, req)
 
@@ -33,6 +33,54 @@ function setupCache (config = {}) {
 
     try {
       res = await reqConfig.adapter(req)
+
+      //Try to start checking observation here ;)
+      const {
+        document,
+        debug,
+        dictionary,
+        observable,
+        invalidationOrder
+      } = reqConfig;
+      const needObservation = document?.cacheDictionary[req.url];
+      debug('observation filter from library', req.url)
+      if (isFunction(observable)) {
+        observable(config, req, res);
+      }
+      if (needObservation !== undefined) {
+        const { request, response } = dictionary;
+        const invalidationRules = request;
+        const invalidationRulesResponse = response;
+
+        let found = invalidationOrder;
+        if (invalidationRules) {
+          let responseResult = JSON.stringify(req);
+          for (let i = 0; i < invalidationRules.length; i++) {
+            found = responseResult.includes(invalidationRules[i]);
+            debug('observation filter from library foundd', found, invalidationRules[i], req.url);
+            if (found) break;
+          }
+
+          if(!found){
+            responseResult = JSON.stringify(res);
+            for (let i = 0; i < invalidationRulesResponse.length; i++) {
+              found = responseResult.includes(invalidationRulesResponse[i]);
+              debug('observation filter from library foundd response', found, invalidationRulesResponse[i], req.url);
+              if (found) break;
+            }
+          }
+        }
+        if (!found) {
+          needObservation.forEach(async element => {
+            debug('observation filter from library found element', element, found);
+            await reqConfig?.watch?.setItem(element, true);
+          });
+        }
+      }
+      debug('observation filter from library done here', needObservation, res?.status)
+      //End of observation :)
+      config.debug("ress---", res)
+
     } catch (err) {
       networkError = err
     }
@@ -87,7 +135,7 @@ function setupCache (config = {}) {
  * @param {object} [options={}] Axios and cache adapter options
  * @returns {object} Instance of Axios
  */
-function setup (config = {}) {
+function setup(config = {}) {
   const instanceConfig = {
     ...defaults.axios,
     ...config,

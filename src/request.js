@@ -35,6 +35,9 @@ async function request (config, req) {
 
   function excludeFromCache () {
     config.excludeFromCache = true
+    config.debug('excludeFromCache', req.url)
+    config.debug('excludeFromCache next')
+
 
     return { config, next }
   }

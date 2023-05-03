@@ -25,7 +25,11 @@ declare module 'axios'
  */
 export interface IAxiosCacheAdapterOptions
 {
-	document: object
+	host: string;
+	observable?(cfg: IAxiosCacheAdapterOptions, req: AxiosRequestConfig): Promise<void>;
+	dictionary: object;
+	invalidationOrder: boolean;
+	document: object;
 	/**
 	 * {Number} Maximum time for storing each request in milliseconds,
 	 * defaults to 15 minutes when using `setup()`.

@@ -2,14 +2,6 @@ import { isObject } from './utilities'
 
 function filter(config = {}, req) {
   const { debug, document } = config
-
-  const needObservation = document.cacheDictionary[req.url];
-  debug('exclude filter from library', req.url)
-  if (needObservation !== undefined) {
-    needObservation.forEach(async element => {
-      await config?.watch?.setItem(element, true);
-    });
-  }
   if(Object.keys(document.included).length === 0) return false;
   return document.included[req.url] === undefined
 }

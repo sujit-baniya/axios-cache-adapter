@@ -1,5 +1,5 @@
 // glob pattern for all test files
-const tests = require.context('.', true, /.+\.spec\.js$/)
+const tests = require.context('.', true, /.+\.specs\.js$/)
 
 // Magic happening here !
 tests.keys().forEach(tests)
