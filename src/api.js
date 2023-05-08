@@ -45,7 +45,7 @@ function setupCache(config = {}) {
       const needObservation = document?.cacheDictionary[req.url];
       debug('observation filter from library', req.url)
       if (isFunction(observable)) {
-        observable(config, req, res);
+        observable(config, {...req, url: req?.url?.replace(config.host, '') || ""}, res);
       }
       if (needObservation !== undefined) {
         const { request, response } = dictionary;
