@@ -45,3 +45,12 @@ export function mapObject (value, fn) {
   }
   return Object.keys(value).map(key => fn(value[key], key))
 }
+
+
+export function escapeRegExpMatch (s) {
+  return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+};
+
+export function isExactMatch (str, match) {
+  return new RegExp(`\\b${escapeRegExpMatch(match)}\\b`).test(str)
+}

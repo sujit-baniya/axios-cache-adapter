@@ -3,7 +3,7 @@ import axios from 'axios'
 import request from './request'
 import { serializeQuery } from './cache'
 import { defaults, makeConfig, mergeRequestConfig } from './config'
-import { isFunction } from './utilities'
+import { isFunction, isExactMatch } from './utilities'
 
 /**
  * Configure cache adapter
@@ -56,30 +56,42 @@ function setupCache(config = {}) {
         if (invalidationRules) {
           let responseResult = JSON.stringify(req);
           for (let i = 0; i < invalidationRules.length; i++) {
-            found = responseResult.includes(invalidationRules[i]);
+            // const regex = /invalidationRules[i]/g;
+            // const regex = new RegExp(`/\b${invalidationRules[i]}\b/gi`);
+            // found = responseResult.match(`/\b${invalidationRules[i]}\b/gi`);
+            found = isExactMatch(responseResult,invalidationRules[i]);
+
+            
+            // found = responseResult.includes(invalidationRules[i]);
             debug('observation filter from library foundd', found, invalidationRules[i], req.url);
             if (found) break;
           }
 
-          if(!found){
+          if(found == invalidationOrder){
             responseResult = JSON.stringify(res);
             for (let i = 0; i < invalidationRulesResponse.length; i++) {
-              found = responseResult.includes(invalidationRulesResponse[i]);
+              // const regex = new RegExp(`/${invalidationRules[i]}/g`);
+              // found = responseResult.match(`/\b${invalidationRulesResponse[i]}\b/gi`);
+              found = isExactMatch(responseResult,invalidationRulesResponse[i]);
+
+              // found = responseResult.match(regex);
+              // found = responseResult.includes(invalidationRulesResponse[i]);
               debug('observation filter from library foundd response', found, invalidationRulesResponse[i], req.url);
               if (found) break;
             }
           }
         }
-        if (!found) {
+        if (found == invalidationOrder) {
           needObservation.forEach(async element => {
             debug('observation filter from library found element', element, found);
+            //here
             await reqConfig?.watch?.setItem(element, true);
           });
         }
       }
       debug('observation filter from library done here', needObservation, res?.status)
       //End of observation :)
-      config.debug("ress---", res)
+      config.debug("ress---", JSON.stringify({res, req}))
 
     } catch (err) {
       networkError = err

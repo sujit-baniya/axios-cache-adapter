@@ -96,7 +96,7 @@ async function watchingInvalidate(config, req) {
   const url = req?.url?.replace(config.host, '') || '';
   const result = await config.watch?.getItem(url);
 
-  console.log('watchingInvalidate', result, config.uuid, req.url)
+  console.log(config.watch,'watchingInvalidate', result, config.uuid, req.url)
   if (result !== null) {
     console.log('watchingInvalidate inside', config.watch, config.store)
     // config.debug(`watching invalidate-------<>-----, ${config.uuid}, <>------<>, ${config.watch}`)
