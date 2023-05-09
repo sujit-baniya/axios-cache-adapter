@@ -4074,12 +4074,12 @@ function _watchingInvalidate() {
           return (_config$watch = config.watch) === null || _config$watch === void 0 ? void 0 : _config$watch.getItem(url);
         case 3:
           result = _context4.sent;
-          console.log(config.watch, 'watchingInvalidate', result, config.uuid, req.url);
+          config.debug(config.watch, 'watchingInvalidate', result, config.uuid, req.url);
           if (!(result !== null)) {
             _context4.next = 11;
             break;
           }
-          console.log('watchingInvalidate inside', config.watch, config.store);
+          config.debug('watchingInvalidate inside', config.watch, config.store);
           // config.debug(`watching invalidate-------<>-----, ${config.uuid}, <>------<>, ${config.watch}`)
           _context4.next = 9;
           return (_config$watch2 = config.watch) === null || _config$watch2 === void 0 ? void 0 : _config$watch2.removeItem(url);
@@ -4219,13 +4219,13 @@ var disallowedPerRequestKeys = ['limit', 'store', 'adapter', 'uuid', 'acceptStal
 var proxyHandler = {
   get: function get(target, prop, receiver) {
     if (_typeof(target[prop]) === "object" && target[prop] !== null) {
-      console.log("dyno ;)", target[prop], "proxyHanlerrrrrrrr me ;)");
+      // console.log("dyno ;)", target[prop], "proxyHanlerrrrrrrr me ;)");
       return setupHostProxy(target.host, target[prop]);
     }
-    console.log('lol', prop);
+    // console.log('lol', prop)
     try {
       var result = target.host !== null && prop.replace(target.host, '') || prop;
-      console.log(result, 'opppppslol', target[result]);
+      // console.log(result, 'opppppslol', target[result])
       return target[result];
     } catch (_unused) {
       return target[prop];

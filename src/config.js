@@ -48,13 +48,13 @@ const disallowedPerRequestKeys = ['limit', 'store', 'adapter', 'uuid', 'acceptSt
 const proxyHandler = {
   get(target, prop, receiver) {
     if (typeof target[prop] === "object" && target[prop] !== null) {
-      console.log("dyno ;)", target[prop], "proxyHanlerrrrrrrr me ;)");
+      // console.log("dyno ;)", target[prop], "proxyHanlerrrrrrrr me ;)");
       return setupHostProxy(target.host, target[prop]); 
     }
-    console.log('lol', prop)
+    // console.log('lol', prop)
     try{
       const result = target.host !== null && prop.replace(target.host, '') || prop;
-      console.log(result, 'opppppslol', target[result])
+      // console.log(result, 'opppppslol', target[result])
       return target[result]
     }catch{
       return target[prop]
