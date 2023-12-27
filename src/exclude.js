@@ -1,9 +1,16 @@
 import { isObject } from './utilities'
 
+function obscureQueryParameterValues(url) {
+  // Use a regular expression to match and replace query parameter values with asterisks
+  return url?.replace(/(\?|&)([^&=]+)=([^&]+)/g, '$1$2=***');
+}
+
 function filter(config = {}, req) {
   const { debug, document } = config
   if(Object.keys(document.included).length === 0) return false;
-  return document.included[req.url] === undefined
+  const url = document.included[obscureQueryParameterValues(req.url)];
+  console.log('[axios][filter]', url, url === undefined)
+  return url === undefined
 }
 
 function exclude(config = {}, req) {

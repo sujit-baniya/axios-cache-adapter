@@ -4,7 +4,8 @@ import request from './request'
 import { serializeQuery } from './cache'
 import { defaults, makeConfig, mergeRequestConfig } from './config'
 import { isFunction, isExactMatch } from './utilities'
-
+import MMKVStore from './mmkv'
+import MemoryStore from './memory'
 /**
  * Configure cache adapter
  *
@@ -169,5 +170,5 @@ function setup(config = {}) {
   return api
 }
 
-export { setup, setupCache, serializeQuery }
-export default { setup, setupCache, serializeQuery }
+export { setup, setupCache, serializeQuery, MMKVStore, MemoryStore }
+export default { setup, setupCache, serializeQuery, MMKVStore, MemoryStore }
