@@ -5173,7 +5173,8 @@ var defaults = {
     readOnError: false,
     readHeaders: false,
     debug: false,
-    ignoreCache: false
+    ignoreCache: false,
+    filterFn: undefined
   },
   // Additional defaults when creating the axios instance with the cache adapter.
   axios: {
@@ -5313,9 +5314,11 @@ function filter() {
   var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var req = arguments.length > 1 ? arguments[1] : undefined;
   var debug = config.debug,
-    document = config.document;
+    document = config.document,
+    _config$filterFn = config.filterFn,
+    filterFn = _config$filterFn === void 0 ? obscureQueryParameterValues : _config$filterFn;
   if (Object.keys(document.included).length === 0) return false;
-  var url = document.included[obscureQueryParameterValues(req.url)];
+  var url = document.included[req.url] || filterFn && document.included[filterFn(req.url)];
   console.log('[axios][filter]', url, url === undefined);
   return url === undefined;
 }

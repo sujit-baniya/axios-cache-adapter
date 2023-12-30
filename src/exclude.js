@@ -6,9 +6,9 @@ function obscureQueryParameterValues(url) {
 }
 
 function filter(config = {}, req) {
-  const { debug, document } = config
+  const { debug, document, filterFn = obscureQueryParameterValues } = config
   if(Object.keys(document.included).length === 0) return false;
-  const url = document.included[obscureQueryParameterValues(req.url)];
+  const url = document.included[req.url] || filterFn && document.included[filterFn(req.url)];
   console.log('[axios][filter]', url, url === undefined)
   return url === undefined
 }

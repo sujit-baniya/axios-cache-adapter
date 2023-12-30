@@ -26,6 +26,7 @@ declare module 'axios'
 export interface IAxiosCacheAdapterOptions
 {
 	host: string;
+	filterFn: Function;
 	observable?(cfg: IAxiosCacheAdapterOptions, req: AxiosRequestConfig): Promise<void>;
 	dictionary: object;
 	invalidationOrder: boolean;
