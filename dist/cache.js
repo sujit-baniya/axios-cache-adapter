@@ -5166,7 +5166,7 @@ var defaults = {
       paths: [],
       query: false,
       filter: null,
-      methods: ['post', 'patch', 'put', 'delete']
+      methods: ['patch', 'put', 'delete']
     },
     adapter: axios__WEBPACK_IMPORTED_MODULE_6___default.a.defaults.adapter,
     clearOnStale: true,
