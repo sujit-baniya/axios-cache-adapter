@@ -54,3 +54,8 @@ export function escapeRegExpMatch (s) {
 export function isExactMatch (str, match) {
   return new RegExp(`\\b${escapeRegExpMatch(match)}\\b`).test(str)
 }
+
+export function obscureQueryParameterValues(url) {
+  // Use a regular expression to match and replace query parameter values with asterisks
+  return url?.replace(/(\?|&)([^&=]+)=([^&]+)/g, "$1$2=***");
+}

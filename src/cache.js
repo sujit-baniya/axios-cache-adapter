@@ -1,4 +1,4 @@
-import { isString, isFunction } from './utilities'
+import { isString, isFunction, obscureQueryParameterValues } from './utilities'
 import md5 from 'md5'
 
 import serialize from './serialize'
@@ -93,12 +93,13 @@ async function defaultInvalidate(config, req) {
 
 async function watchingInvalidate(config, req) {
   // const result = await config.watch?.getItem(config.uuid);
-  const url = req?.url?.replace(config.host, '') || '';
+  const url = obscureQueryParameterValues(req?.url?.replace(config.host, '')) || '';
   const result = await config.watch?.getItem(url);
 
-  config.debug(config.watch,'watchingInvalidate', result, config.uuid, req.url)
+  config.debug('watchingInvalidate', result, config.uuid, req.url, url)
   if (result !== null) {
-    config.debug('watchingInvalidate inside', config.watch, config.store)
+    config.debug('watchingInvalidate inside - watch', config.watch)
+    config.debug('watchingInvalidate inside - store', config.store)
     // config.debug(`watching invalidate-------<>-----, ${config.uuid}, <>------<>, ${config.watch}`)
     await config.watch?.removeItem(url)
     await config.store.removeItem(config.uuid)
