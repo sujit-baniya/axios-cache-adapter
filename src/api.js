@@ -41,9 +41,10 @@ function setupCache(config = {}) {
         debug,
         dictionary,
         observable,
-        invalidationOrder
+        invalidationOrder, 
+        filterFn = obscureQueryParameterValues
       } = reqConfig;
-      const needObservation = document?.cacheDictionary[obscureQueryParameterValues(req.url)] || document?.cacheDictionary[req.url];
+      const needObservation = document?.cacheDictionary[filterFn(req.url)] || document?.cacheDictionary[req.url];
       debug('observation filter from library', req.url)
       if (isFunction(observable)) {
         observable(config, {...req, url: req?.url?.replace(config.host, '') || ""}, res);

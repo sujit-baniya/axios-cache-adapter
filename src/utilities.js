@@ -57,5 +57,9 @@ export function isExactMatch (str, match) {
 
 export function obscureQueryParameterValues(url) {
   // Use a regular expression to match and replace query parameter values with asterisks
+  const md5Index = url.indexOf('[M25++]');
+  if (md5Index !== -1) {
+    return url.slice(0, md5Index).replace(/(\?|&)([^&=]+)=([^&]+)/g, "$1$2=***");
+  }
   return url?.replace(/(\?|&)([^&=]+)=([^&]+)/g, "$1$2=***");
 }

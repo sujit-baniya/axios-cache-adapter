@@ -71,13 +71,13 @@ function key(config) {
     cacheKey = req => {
       const url = `${req.baseURL ? req.baseURL : ''}${req.url}`
       const key = `${config.key}/${url}${serializeQuery(req)}`
-      return req.data ? key + md5(req.data) : key
+      return req.data ? key + `[M25++]${md5(req.data)}` : key
     }
   } else {
     cacheKey = req => {
       const url = `${req.baseURL ? req.baseURL : ''}${req.url}`
       const key = url + serializeQuery(req)
-      return req.data ? key + md5(req.data) : key
+      return req.data ? key + `[M25++]${md5(req.data)}` : key
     }
   }
 
@@ -93,7 +93,8 @@ async function defaultInvalidate(config, req) {
 
 async function watchingInvalidate(config, req) {
   // const result = await config.watch?.getItem(config.uuid);
-  const url = obscureQueryParameterValues(req?.url?.replace(config.host, '')) || '';
+  const { filterFn = obscureQueryParameterValues } = config
+  const url = filterFn(req?.url?.replace(config.host, '')) || '';
   const result = await config.watch?.getItem(url);
 
   config.debug('watchingInvalidate', result, config.uuid, req.url, url)

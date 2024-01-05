@@ -4617,7 +4617,7 @@ function setupCache() {
   } // Return adapter and store instance
   function _adapter() {
     _adapter = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(req) {
-      var reqConfig, res, next, networkError, _res, document, debug, dictionary, observable, invalidationOrder, needObservation, _req$url, _request, response, invalidationRules, invalidationRulesResponse, found, responseResult, i, _i, readOnError;
+      var reqConfig, res, next, networkError, _res, document, debug, dictionary, observable, invalidationOrder, _reqConfig$filterFn, filterFn, needObservation, _req$url, _request, response, invalidationRules, invalidationRulesResponse, found, responseResult, i, _i, readOnError;
       return _regeneratorRuntime().wrap(function _callee2$(_context2) {
         while (1) switch (_context2.prev = _context2.next) {
           case 0:
@@ -4640,8 +4640,8 @@ function setupCache() {
           case 10:
             res = _context2.sent;
             //Try to start checking observation here ;)
-            document = reqConfig.document, debug = reqConfig.debug, dictionary = reqConfig.dictionary, observable = reqConfig.observable, invalidationOrder = reqConfig.invalidationOrder;
-            needObservation = (document === null || document === void 0 ? void 0 : document.cacheDictionary[Object(_utilities__WEBPACK_IMPORTED_MODULE_16__["obscureQueryParameterValues"])(req.url)]) || (document === null || document === void 0 ? void 0 : document.cacheDictionary[req.url]);
+            document = reqConfig.document, debug = reqConfig.debug, dictionary = reqConfig.dictionary, observable = reqConfig.observable, invalidationOrder = reqConfig.invalidationOrder, _reqConfig$filterFn = reqConfig.filterFn, filterFn = _reqConfig$filterFn === void 0 ? _utilities__WEBPACK_IMPORTED_MODULE_16__["obscureQueryParameterValues"] : _reqConfig$filterFn;
+            needObservation = (document === null || document === void 0 ? void 0 : document.cacheDictionary[filterFn(req.url)]) || (document === null || document === void 0 ? void 0 : document.cacheDictionary[req.url]);
             debug('observation filter from library', req.url);
             if (Object(_utilities__WEBPACK_IMPORTED_MODULE_16__["isFunction"])(observable)) {
               observable(config, _objectSpread(_objectSpread({}, req), {}, {
@@ -4992,13 +4992,15 @@ function key(config) {
     cacheKey = function cacheKey(req) {
       var url = "".concat(req.baseURL ? req.baseURL : '').concat(req.url);
       var key = "".concat(config.key, "/").concat(url).concat(serializeQuery(req));
-      return req.data ? key + md5__WEBPACK_IMPORTED_MODULE_13___default()(req.data) : key;
+      config.debug('watchingCache - key string ', req.data ? key + "[M25++]".concat(md5__WEBPACK_IMPORTED_MODULE_13___default()(req.data)) : key);
+      return req.data ? key + "[M25++]".concat(md5__WEBPACK_IMPORTED_MODULE_13___default()(req.data)) : key;
     };
   } else {
     cacheKey = function cacheKey(req) {
       var url = "".concat(req.baseURL ? req.baseURL : '').concat(req.url);
       var key = url + serializeQuery(req);
-      return req.data ? key + md5__WEBPACK_IMPORTED_MODULE_13___default()(req.data) : key;
+      config.debug('watchingCache - key', req.data ? key + "[M25++]".concat(md5__WEBPACK_IMPORTED_MODULE_13___default()(req.data)) : key);
+      return req.data ? key + "[M25++]".concat(md5__WEBPACK_IMPORTED_MODULE_13___default()(req.data)) : key;
     };
   }
   return cacheKey;
@@ -5033,30 +5035,31 @@ function watchingInvalidate(_x8, _x9) {
 function _watchingInvalidate() {
   _watchingInvalidate = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(config, req) {
     var _req$url, _config$watch;
-    var url, result, _config$watch2;
+    var _config$filterFn, filterFn, url, result, _config$watch2;
     return _regeneratorRuntime().wrap(function _callee4$(_context4) {
       while (1) switch (_context4.prev = _context4.next) {
         case 0:
           // const result = await config.watch?.getItem(config.uuid);
-          url = Object(_utilities__WEBPACK_IMPORTED_MODULE_12__["obscureQueryParameterValues"])(req === null || req === void 0 || (_req$url = req.url) === null || _req$url === void 0 ? void 0 : _req$url.replace(config.host, '')) || '';
-          _context4.next = 3;
+          _config$filterFn = config.filterFn, filterFn = _config$filterFn === void 0 ? _utilities__WEBPACK_IMPORTED_MODULE_12__["obscureQueryParameterValues"] : _config$filterFn;
+          url = filterFn(req === null || req === void 0 || (_req$url = req.url) === null || _req$url === void 0 ? void 0 : _req$url.replace(config.host, '')) || '';
+          _context4.next = 4;
           return (_config$watch = config.watch) === null || _config$watch === void 0 ? void 0 : _config$watch.getItem(url);
-        case 3:
+        case 4:
           result = _context4.sent;
           config.debug('watchingInvalidate', result, config.uuid, req.url, url);
           if (!(result !== null)) {
-            _context4.next = 12;
+            _context4.next = 13;
             break;
           }
           config.debug('watchingInvalidate inside - watch', config.watch);
           config.debug('watchingInvalidate inside - store', config.store);
           // config.debug(`watching invalidate-------<>-----, ${config.uuid}, <>------<>, ${config.watch}`)
-          _context4.next = 10;
+          _context4.next = 11;
           return (_config$watch2 = config.watch) === null || _config$watch2 === void 0 ? void 0 : _config$watch2.removeItem(url);
-        case 10:
-          _context4.next = 12;
+        case 11:
+          _context4.next = 13;
           return config.store.removeItem(config.uuid);
-        case 12:
+        case 13:
         case "end":
           return _context4.stop();
       }
@@ -5296,28 +5299,21 @@ var mergeRequestConfig = function mergeRequestConfig(config, req) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "exclude", function() { return exclude; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "filter", function() { return filter; });
-/* harmony import */ var core_js_modules_es6_regexp_replace_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es6.regexp.replace.js */ "./node_modules/core-js/modules/es6.regexp.replace.js");
-/* harmony import */ var core_js_modules_es6_regexp_replace_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_regexp_replace_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es6_string_includes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es6.string.includes.js */ "./node_modules/core-js/modules/es6.string.includes.js");
-/* harmony import */ var core_js_modules_es6_string_includes_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_string_includes_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es7_array_includes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es7.array.includes.js */ "./node_modules/core-js/modules/es7.array.includes.js");
-/* harmony import */ var core_js_modules_es7_array_includes_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es7_array_includes_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _utilities__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utilities */ "./src/utilities.js");
+/* harmony import */ var core_js_modules_es6_string_includes_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es6.string.includes.js */ "./node_modules/core-js/modules/es6.string.includes.js");
+/* harmony import */ var core_js_modules_es6_string_includes_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_string_includes_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es7_array_includes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es7.array.includes.js */ "./node_modules/core-js/modules/es7.array.includes.js");
+/* harmony import */ var core_js_modules_es7_array_includes_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es7_array_includes_js__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _utilities__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utilities */ "./src/utilities.js");
 
 
 
-
-function obscureQueryParameterValues(url) {
-  // Use a regular expression to match and replace query parameter values with asterisks
-  return url === null || url === void 0 ? void 0 : url.replace(/(\?|&)([^&=]+)=([^&]+)/g, '$1$2=***');
-}
 function filter() {
   var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var req = arguments.length > 1 ? arguments[1] : undefined;
   var debug = config.debug,
     document = config.document,
     _config$filterFn = config.filterFn,
-    filterFn = _config$filterFn === void 0 ? obscureQueryParameterValues : _config$filterFn;
+    filterFn = _config$filterFn === void 0 ? _utilities__WEBPACK_IMPORTED_MODULE_2__["obscureQueryParameterValues"] : _config$filterFn;
   if (Object.keys(document.included).length === 0) return false;
   var url = document.included[req.url] || filterFn && document.included[filterFn(req.url)];
   console.log('[axios][filter]', url, url === undefined);
@@ -5344,7 +5340,7 @@ function exclude() {
   }
 
   // do not cache request with query
-  var hasQueryParams = /\?.*$/.test(req.url) || Object(_utilities__WEBPACK_IMPORTED_MODULE_3__["isObject"])(req.params) && Object.keys(req.params).length !== 0 || typeof URLSearchParams !== 'undefined' && req.params instanceof URLSearchParams;
+  var hasQueryParams = /\?.*$/.test(req.url) || Object(_utilities__WEBPACK_IMPORTED_MODULE_2__["isObject"])(req.params) && Object.keys(req.params).length !== 0 || typeof URLSearchParams !== 'undefined' && req.params instanceof URLSearchParams;
   if (exclude.query && hasQueryParams) {
     debug("Excluding request by query ".concat(req.url));
     return true;
@@ -6259,10 +6255,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es6_regexp_replace_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_regexp_replace_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var core_js_modules_es6_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es6.regexp.constructor.js */ "./node_modules/core-js/modules/es6.regexp.constructor.js");
 /* harmony import */ var core_js_modules_es6_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_regexp_constructor_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es6_symbol_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es6.symbol.js */ "./node_modules/core-js/modules/es6.symbol.js");
-/* harmony import */ var core_js_modules_es6_symbol_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_symbol_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es6_array_iterator_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es6.array.iterator.js */ "./node_modules/core-js/modules/es6.array.iterator.js");
-/* harmony import */ var core_js_modules_es6_array_iterator_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_array_iterator_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es6_array_slice_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es6.array.slice.js */ "./node_modules/core-js/modules/es6.array.slice.js");
+/* harmony import */ var core_js_modules_es6_array_slice_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_array_slice_js__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es6_symbol_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es6.symbol.js */ "./node_modules/core-js/modules/es6.symbol.js");
+/* harmony import */ var core_js_modules_es6_symbol_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_symbol_js__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es6_array_iterator_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es6.array.iterator.js */ "./node_modules/core-js/modules/es6.array.iterator.js");
+/* harmony import */ var core_js_modules_es6_array_iterator_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_array_iterator_js__WEBPACK_IMPORTED_MODULE_5__);
+
 
 
 
@@ -6314,6 +6313,10 @@ function isExactMatch(str, match) {
 }
 function obscureQueryParameterValues(url) {
   // Use a regular expression to match and replace query parameter values with asterisks
+  var md5Index = url.indexOf('[M25++]');
+  if (md5Index !== -1) {
+    return url.slice(0, md5Index).replace(/(\?|&)([^&=]+)=([^&]+)/g, "$1$2=***");
+  }
   return url === null || url === void 0 ? void 0 : url.replace(/(\?|&)([^&=]+)=([^&]+)/g, "$1$2=***");
 }
 
