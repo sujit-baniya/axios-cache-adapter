@@ -4032,14 +4032,12 @@ function key(config) {
     cacheKey = function cacheKey(req) {
       var url = "".concat(req.baseURL ? req.baseURL : '').concat(req.url);
       var key = "".concat(config.key, "/").concat(url).concat(serializeQuery(req));
-      config.debug('watchingCache - key string ', req.data ? key + "[M25++]".concat(md5__WEBPACK_IMPORTED_MODULE_13___default()(req.data)) : key);
       return req.data ? key + "[M25++]".concat(md5__WEBPACK_IMPORTED_MODULE_13___default()(req.data)) : key;
     };
   } else {
     cacheKey = function cacheKey(req) {
       var url = "".concat(req.baseURL ? req.baseURL : '').concat(req.url);
       var key = url + serializeQuery(req);
-      config.debug('watchingCache - key', req.data ? key + "[M25++]".concat(md5__WEBPACK_IMPORTED_MODULE_13___default()(req.data)) : key);
       return req.data ? key + "[M25++]".concat(md5__WEBPACK_IMPORTED_MODULE_13___default()(req.data)) : key;
     };
   }
