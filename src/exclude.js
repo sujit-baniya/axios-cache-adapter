@@ -1,9 +1,4 @@
-import { isObject } from './utilities'
-
-function obscureQueryParameterValues(url) {
-  // Use a regular expression to match and replace query parameter values with asterisks
-  return url?.replace(/(\?|&)([^&=]+)=([^&]+)/g, '$1$2=***');
-}
+import { isObject, obscureQueryParameterValues } from './utilities'
 
 function filter(config = {}, req) {
   const { debug, document, filterFn = obscureQueryParameterValues } = config

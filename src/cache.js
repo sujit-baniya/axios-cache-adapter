@@ -1,4 +1,4 @@
-import { isString, isFunction } from './utilities'
+import { isString, isFunction, obscureQueryParameterValues } from './utilities'
 import md5 from 'md5'
 
 import serialize from './serialize'
@@ -71,13 +71,13 @@ function key(config) {
     cacheKey = req => {
       const url = `${req.baseURL ? req.baseURL : ''}${req.url}`
       const key = `${config.key}/${url}${serializeQuery(req)}`
-      return req.data ? key + md5(req.data) : key
+      return req.data ? key + `[M25++]${md5(req.data)}` : key
     }
   } else {
     cacheKey = req => {
       const url = `${req.baseURL ? req.baseURL : ''}${req.url}`
       const key = url + serializeQuery(req)
-      return req.data ? key + md5(req.data) : key
+      return req.data ? key + `[M25++]${md5(req.data)}` : key
     }
   }
 
@@ -93,12 +93,14 @@ async function defaultInvalidate(config, req) {
 
 async function watchingInvalidate(config, req) {
   // const result = await config.watch?.getItem(config.uuid);
-  const url = req?.url?.replace(config.host, '') || '';
+  const { filterFn = obscureQueryParameterValues } = config
+  const url = filterFn(req?.url?.replace(config.host, '')) || '';
   const result = await config.watch?.getItem(url);
 
-  config.debug(config.watch,'watchingInvalidate', result, config.uuid, req.url)
+  config.debug('watchingInvalidate', result, config.uuid, req.url, url)
   if (result !== null) {
-    config.debug('watchingInvalidate inside', config.watch, config.store)
+    config.debug('watchingInvalidate inside - watch', config.watch)
+    config.debug('watchingInvalidate inside - store', config.store)
     // config.debug(`watching invalidate-------<>-----, ${config.uuid}, <>------<>, ${config.watch}`)
     await config.watch?.removeItem(url)
     await config.store.removeItem(config.uuid)

@@ -23,7 +23,7 @@ const defaults = {
       paths: [],
       query: false,
       filter: null,
-      methods: ['post', 'patch', 'put', 'delete']
+      methods: ['patch', 'put', 'delete']
     },
     adapter: axios.defaults.adapter,
     clearOnStale: true,

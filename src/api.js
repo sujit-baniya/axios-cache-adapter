@@ -3,7 +3,7 @@ import axios from 'axios'
 import request from './request'
 import { serializeQuery } from './cache'
 import { defaults, makeConfig, mergeRequestConfig } from './config'
-import { isFunction, isExactMatch } from './utilities'
+import { isFunction, isExactMatch, obscureQueryParameterValues } from './utilities'
 import MMKVStore from './mmkv'
 import MemoryStore from './memory'
 /**
@@ -41,9 +41,10 @@ function setupCache(config = {}) {
         debug,
         dictionary,
         observable,
-        invalidationOrder
+        invalidationOrder, 
+        filterFn = obscureQueryParameterValues
       } = reqConfig;
-      const needObservation = document?.cacheDictionary[req.url];
+      const needObservation = document?.cacheDictionary[filterFn(req.url)] || document?.cacheDictionary[req.url];
       debug('observation filter from library', req.url)
       if (isFunction(observable)) {
         observable(config, {...req, url: req?.url?.replace(config.host, '') || ""}, res);
