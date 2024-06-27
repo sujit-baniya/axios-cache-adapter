@@ -92,6 +92,11 @@ async function defaultInvalidate(config, req) {
 }
 
 async function watchingInvalidate(config, req) {
+  if (isFunction(config?.store?.invalidate)) {
+    const url = await config.store.invalidate(config, req)
+    await config.watch?.removeItem(url)
+    return;
+  }
   // const result = await config.watch?.getItem(config.uuid);
   const { filterFn = obscureQueryParameterValues } = config
   const url = filterFn(req?.url?.replace(config.host, '')) || '';
@@ -108,7 +113,9 @@ async function watchingInvalidate(config, req) {
 }
 
 function invalidate(config = {}) {
-  if (isFunction(config.invalidate)) return config.invalidate
+  if (isFunction(config?.invalidate)) {
+    return config.invalidate
+  }
   return watchingInvalidate
 }
 

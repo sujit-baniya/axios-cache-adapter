@@ -4715,15 +4715,26 @@ function setupCache() {
             if (found == invalidationOrder) {
               needObservation.forEach( /*#__PURE__*/function () {
                 var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(element) {
+                  var _config$store;
                   var _reqConfig$watch;
                   return _regeneratorRuntime().wrap(function _callee$(_context) {
                     while (1) switch (_context.prev = _context.next) {
                       case 0:
                         debug('observation filter from library found element', element, found);
                         //here
-                        _context.next = 3;
+                        if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_16__["isFunction"])((_config$store = config.store) === null || _config$store === void 0 ? void 0 : _config$store.setWatchItem)) {
+                          _context.next = 6;
+                          break;
+                        }
+                        _context.next = 4;
+                        return config.store.setWatchItem(element, true);
+                      case 4:
+                        _context.next = 8;
+                        break;
+                      case 6:
+                        _context.next = 8;
                         return reqConfig === null || reqConfig === void 0 || (_reqConfig$watch = reqConfig.watch) === null || _reqConfig$watch === void 0 ? void 0 : _reqConfig$watch.setItem(element, true);
-                      case 3:
+                      case 8:
                       case "end":
                         return _context.stop();
                     }
@@ -5032,32 +5043,45 @@ function watchingInvalidate(_x8, _x9) {
 }
 function _watchingInvalidate() {
   _watchingInvalidate = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(config, req) {
-    var _req$url, _config$watch;
-    var _config$filterFn, filterFn, url, result, _config$watch2;
+    var _config$store, _req$url, _config$watch2;
+    var _config$watch, _url, _config$filterFn, filterFn, url, result, _config$watch3;
     return _regeneratorRuntime().wrap(function _callee4$(_context4) {
       while (1) switch (_context4.prev = _context4.next) {
         case 0:
+          if (!Object(_utilities__WEBPACK_IMPORTED_MODULE_12__["isFunction"])(config === null || config === void 0 || (_config$store = config.store) === null || _config$store === void 0 ? void 0 : _config$store.invalidate)) {
+            _context4.next = 7;
+            break;
+          }
+          _context4.next = 3;
+          return config.store.invalidate(config, req);
+        case 3:
+          _url = _context4.sent;
+          _context4.next = 6;
+          return (_config$watch = config.watch) === null || _config$watch === void 0 ? void 0 : _config$watch.removeItem(_url);
+        case 6:
+          return _context4.abrupt("return");
+        case 7:
           // const result = await config.watch?.getItem(config.uuid);
           _config$filterFn = config.filterFn, filterFn = _config$filterFn === void 0 ? _utilities__WEBPACK_IMPORTED_MODULE_12__["obscureQueryParameterValues"] : _config$filterFn;
           url = filterFn(req === null || req === void 0 || (_req$url = req.url) === null || _req$url === void 0 ? void 0 : _req$url.replace(config.host, '')) || '';
-          _context4.next = 4;
-          return (_config$watch = config.watch) === null || _config$watch === void 0 ? void 0 : _config$watch.getItem(url);
-        case 4:
+          _context4.next = 11;
+          return (_config$watch2 = config.watch) === null || _config$watch2 === void 0 ? void 0 : _config$watch2.getItem(url);
+        case 11:
           result = _context4.sent;
           config.debug('watchingInvalidate', result, config.uuid, req.url, url);
           if (!(result !== null)) {
-            _context4.next = 13;
+            _context4.next = 20;
             break;
           }
           config.debug('watchingInvalidate inside - watch', config.watch);
           config.debug('watchingInvalidate inside - store', config.store);
           // config.debug(`watching invalidate-------<>-----, ${config.uuid}, <>------<>, ${config.watch}`)
-          _context4.next = 11;
-          return (_config$watch2 = config.watch) === null || _config$watch2 === void 0 ? void 0 : _config$watch2.removeItem(url);
-        case 11:
-          _context4.next = 13;
+          _context4.next = 18;
+          return (_config$watch3 = config.watch) === null || _config$watch3 === void 0 ? void 0 : _config$watch3.removeItem(url);
+        case 18:
+          _context4.next = 20;
           return config.store.removeItem(config.uuid);
-        case 13:
+        case 20:
         case "end":
           return _context4.stop();
       }
@@ -5067,7 +5091,9 @@ function _watchingInvalidate() {
 }
 function invalidate() {
   var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  if (Object(_utilities__WEBPACK_IMPORTED_MODULE_12__["isFunction"])(config.invalidate)) return config.invalidate;
+  if (Object(_utilities__WEBPACK_IMPORTED_MODULE_12__["isFunction"])(config === null || config === void 0 ? void 0 : config.invalidate)) {
+    return config.invalidate;
+  }
   return watchingInvalidate;
 }
 function serializeQuery(req) {

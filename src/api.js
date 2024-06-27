@@ -41,13 +41,13 @@ function setupCache(config = {}) {
         debug,
         dictionary,
         observable,
-        invalidationOrder, 
+        invalidationOrder,
         filterFn = obscureQueryParameterValues
       } = reqConfig;
       const needObservation = document?.cacheDictionary[filterFn(req.url)] || document?.cacheDictionary[req.url];
       debug('observation filter from library', req.url)
       if (isFunction(observable)) {
-        observable(config, {...req, url: req?.url?.replace(config.host, '') || ""}, res);
+        observable(config, { ...req, url: req?.url?.replace(config.host, '') || "" }, res);
       }
       if (needObservation !== undefined) {
         const { request, response } = dictionary;
@@ -61,20 +61,20 @@ function setupCache(config = {}) {
             // const regex = /invalidationRules[i]/g;
             // const regex = new RegExp(`/\b${invalidationRules[i]}\b/gi`);
             // found = responseResult.match(`/\b${invalidationRules[i]}\b/gi`);
-            found = isExactMatch(responseResult,invalidationRules[i]);
+            found = isExactMatch(responseResult, invalidationRules[i]);
 
-            
+
             // found = responseResult.includes(invalidationRules[i]);
             debug('observation filter from library foundd', found, invalidationRules[i], req.url);
             if (found) break;
           }
 
-          if(found == invalidationOrder){
+          if (found == invalidationOrder) {
             responseResult = JSON.stringify(res);
             for (let i = 0; i < invalidationRulesResponse.length; i++) {
               // const regex = new RegExp(`/${invalidationRules[i]}/g`);
               // found = responseResult.match(`/\b${invalidationRulesResponse[i]}\b/gi`);
-              found = isExactMatch(responseResult,invalidationRulesResponse[i]);
+              found = isExactMatch(responseResult, invalidationRulesResponse[i]);
 
               // found = responseResult.match(regex);
               // found = responseResult.includes(invalidationRulesResponse[i]);
@@ -87,13 +87,17 @@ function setupCache(config = {}) {
           needObservation.forEach(async element => {
             debug('observation filter from library found element', element, found);
             //here
-            await reqConfig?.watch?.setItem(element, true);
+            if (isFunction(config.store?.setWatchItem)) {
+              await config.store.setWatchItem(element, true);
+            } else {
+              await reqConfig?.watch?.setItem(element, true);
+            }
           });
         }
       }
       debug('observation filter from library done here', needObservation, res?.status)
       //End of observation :)
-      config.debug("ress---", JSON.stringify({res, req}))
+      config.debug("ress---", JSON.stringify({ res, req }))
 
     } catch (err) {
       networkError = err
